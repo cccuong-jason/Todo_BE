@@ -1,5 +1,6 @@
 import { AnySchema } from "yup";
 import { Request, Response, NextFunction } from "express";
+import { singletonResponse } from "../utils/response.utils"
 import log from "../logger";
 
 const validate = (schema: AnySchema) => async (
@@ -13,11 +14,12 @@ const validate = (schema: AnySchema) => async (
       query: req.query,
       params: req.params,
     });
-
+    console.log("Validate Schema")
     return next();
-  } catch (e: any) {
-    log.error(e);
-    return res.status(400).send(e.errors);
+  } catch (error: any) {
+
+    log.error(error);
+    return singletonResponse.response(error.name , error.message, 400, res)
   }
 };
 

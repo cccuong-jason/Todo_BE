@@ -8,6 +8,10 @@ export interface UserDocument extends mongoose.Document {
 	email: string;
 	name: string;
 	password: string;
+	avatar?: File | string
+	birthday?: Date | string
+	phone: string
+	address: string
 	createdAt: Date;
 	updatedAt: Date;
 	comparePassword(candidatePassword: string): Promise<boolean>
@@ -17,10 +21,17 @@ const UserSchema = new mongoose.Schema<UserDocument>(
 	{
 		email: {type: String, required:true, unique:true},
 		name: {type: String, required: true},
-		password: {type: String, required: true}
+		birthday: { type: Date, default: null},
+		password: {type: String, required: true},
+		phone: { type: String, default: "", trim: true},
+		address: {	type: String, default: "", trim: true},
+		avatar: { type: String, default: "/media/users/default_avatar.png"}
 	},
 	{
-		timestamps: true
+		timestamps: true,
+		toJSON: {
+			virtuals: true
+		}
 	}
 )
 

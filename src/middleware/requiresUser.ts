@@ -1,5 +1,6 @@
 import { get } from "lodash";
 import { Request, Response, NextFunction } from "express";
+import { singletonResponse } from "../utils/response.utils"
 
 const requiresUser = async (
   req: Request,
@@ -9,7 +10,7 @@ const requiresUser = async (
   const user = get(req, "user");
 
   if (!user) {
-    return res.sendStatus(403);
+    return singletonResponse.response("RequestError", "No user credentials found", 400, res)
   }
 
   return next();

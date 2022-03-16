@@ -2,11 +2,14 @@ import logger from "pino"
 import dayjs from "dayjs"
 
 const log = logger({
-	prettyPrint: true,
-	base: {
-		pid: false
-	},
-	timestamp: () => `,"time":"${dayjs().format()}"`
+	transport: {
+    target: 'pino-pretty',
+    options: {
+      translateTime: "SYS:dd-mm-yyyy HH:MM:ss",
+      colorize: true,
+      ignore: "pid,hostname",
+    }
+  	}
 
 })
 

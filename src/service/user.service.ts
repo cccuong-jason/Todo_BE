@@ -1,6 +1,8 @@
-import { DocumentDefinition, FilterQuery } from "mongoose"
+import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose"
 import { omit } from "lodash";
 import User, { UserDocument } from "../model/user.model"
+// import { singletonResposne } from ""
+import log from "../logger"
 
 export async function createUser(input: DocumentDefinition<UserDocument>) {
 	try {
@@ -33,7 +35,9 @@ export async function validatePassword({
     return false;
   }
 
-  // return omit(user.toJSON(), "password");
-
   return user
+}
+
+export async function userInformationUpload(query: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument>, options: QueryOptions) {
+	return User.findOneAndUpdate(query, update, options).lean()	
 }
