@@ -14,9 +14,8 @@ const validate = (schema: AnySchema) => async (
       query: req.query,
       params: req.params,
     });
-    console.log("Validate Schema")
     return next();
-  } catch (error: any) {
+  } catch (error: Error) {
 
     log.error(error);
     return singletonResponse.response(error.name , error.message, 400, res)

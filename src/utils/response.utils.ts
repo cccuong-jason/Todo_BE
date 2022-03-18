@@ -66,8 +66,6 @@ class CustomResponse {
 		this._message = message
 		this._status = status
 		this._additionalInfo = get(httpCode, String(status))
-		console.log(additionalInfo)
-		console.log(status)
 
 		if (additionalInfo && additionalInfo.todo) {
 			this._content =  values(additionalInfo)
@@ -76,8 +74,6 @@ class CustomResponse {
 		} else {
 			this._content = additionalInfo
 		}
-	
-		console.log(this._content)
 
 		this._response(res)
 	}

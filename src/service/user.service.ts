@@ -13,7 +13,10 @@ export async function createUser(input: DocumentDefinition<UserDocument>) {
 }
 
 export async function findUser(query: FilterQuery<UserDocument>) {
-  return User.findOne(query).lean();
+  return User.findOne(query).populate({
+    path: 'todoList',
+    populate: { path: 'taskList' }
+  }).lean()
 }
 
 export async function validatePassword({

@@ -49,3 +49,5 @@ app.listen(port, host, () => {
 	app.use(errorHandler)
 
 })
+
+process.env.TZ = 'Asia/Ho_Chi_Minh'

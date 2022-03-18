@@ -5,21 +5,16 @@ import Todo, { ITodo } from "../model/todo.model"
 import log from '../logger';
 
 export async function createTask(todoId: DocumentDefinition<ITodo>, task: DocumentDefinition<ITask>) {
-	try { 
 
-		let OTask: DocumentDefinition<ITask> = await Task.create(task)
+	let OTask: DocumentDefinition<ITask> = await Task.create(task)
 
-		return await Todo.findByIdAndUpdate(
-			todoId,
-			{
-				$push: {taskList: OTask._id}
-			},
-			{
-				new: true, useFindAndModify: true
-			}
-		) as DocumentDefinition<ITodo>
-
-	} catch (error: any) {
-		throw new Error(error)
-	}
+	return await Todo.findByIdAndUpdate(
+		todoId,
+		{
+			$push: {taskList: OTask._id}
+		},
+		{
+			new: true, useFindAndModify: true
+		}
+	).populate("taskList") 
 }

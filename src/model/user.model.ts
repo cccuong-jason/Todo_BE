@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
+import { ITodo } from "./todo.model"
 import config from "config"
 
 const globalConfig: any = config.get("appConfig");
@@ -14,6 +15,7 @@ export interface UserDocument extends mongoose.Document {
 	address: string
 	createdAt: Date;
 	updatedAt: Date;
+	todoList: ITodo["_id"][]
 	comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -25,7 +27,8 @@ const UserSchema = new mongoose.Schema<UserDocument>(
 		password: {type: String, required: true},
 		phone: { type: String, default: "", trim: true},
 		address: {	type: String, default: "", trim: true},
-		avatar: { type: String, default: "/media/users/default_avatar.png"}
+		avatar: { type: String, default: "/media/users/default_avatar.png"},
+		todoList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Todo"}]
 	},
 	{
 		timestamps: true,

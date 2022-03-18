@@ -1,25 +1,34 @@
 import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose"
 import Todo, { ITodo } from "../model/todo.model"
+import User, { UserDocument } from "../model/user.model"
 import { ITask } from "../model/task.model"
 import { createTask } from "./task.service"
 import log from '../logger';
-import { omit } from "lodash"
+import { omit, get } from "lodash"
+import { singletonResponse } from "../utils/response.utils"
+import { todosFilters } from "../utils/filter.utils"
 
 export async function createTodo(todo: DocumentDefinition<ITodo>, task: Array<DocumentDefinition<ITask>>) {
-	try {
 
-		let OTodo: DocumentDefinition<ITodo> = await Todo.create(omit(todo, "taskList"))
+	let OTodo = await Todo.create(omit(todo, "taskList"))
 
-		task.forEach(async (element) => {
-			OTodo = await createTask(OTodo, element)
-		})
+	var todoResult: any = ""
 
-		return OTodo
+	await User.findByIdAndUpdate(
+		todo.user,
+		{
+			$push: {todoList: OTodo._id}
+		},
+		{
+			new: true, useFindAndModify: true
+		}
+	)
 
-	} catch (error: any) {
+	task.forEach((element) => {
+		todoResult = createTask(OTodo, element)
+	})
 
-		throw new Error(error)
-	}
+	return todoResult
 }
 
 export async function findAllTodo(query?: object | string | number | any) {
@@ -36,13 +45,21 @@ export async function findAllTodo(query?: object | string | number | any) {
 	};
 
 	const options: object = {
+	  select: "-__v -_id",
 	  page: parseInt(query.page),
-	  limit: 4,
+	  limit: 8,
 	  customLabels: myCustomLabels,
-	  populate: "taskList"
+	  populate: "taskList",
+	  lean: true,
+	  sort: { createdAt: "descending"}
 	};
 
-	return await Todo.paginate({}, options, myCustomLabels)
+	const inputQuery = omit(query, "page")
+	const searchType = get(inputQuery, "search") ? "search" : "filter"
+
+	const FTodos = Object.keys(inputQuery).length !== 0 ? todosFilters(omit(query, "page"), searchType) : {}
+
+	return await Todo.paginate(FTodos, options, myCustomLabels)
 }
 
 export async function findTodo(query: FilterQuery<ITodo>, options: QueryOptions = {lean: true}) {

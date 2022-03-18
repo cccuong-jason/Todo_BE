@@ -34,6 +34,7 @@ const ITodoSchema = new mongoose.Schema<ITodo>({
 })
 
 ITodoSchema.plugin(paginate)
+ITodoSchema.index({'$**': 'text'});
 
 const Todo = mongoose.model<ITodo, PaginationModel<ITodo>>("Todo", ITodoSchema)
 
