@@ -11,7 +11,7 @@ export const todosRouter = (route: Router = Router()) => {
 
 	// Todo Get All
 	/* GET /api/todos */
-	route.get("/api/todos", findAllTodoHandler)
+	route.get("/api/todos", requiresUser, findAllTodoHandler)
 
 	// Todo Get By Id
 	/* GET /api/todos/:todoId */

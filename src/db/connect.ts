@@ -7,11 +7,12 @@ const globalConfig: any = config.get("appConfig");
 
 function connect() {
 	const dbUri = globalConfig.parsed.DBURI as string;
+  console.log(dbUri)
 
 	return mongoose
     .connect(dbUri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     } as ConnectOptions)
     .then(() => {
       log.info("Database connected");

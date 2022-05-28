@@ -7,7 +7,7 @@ import log from "../logger"
 
 export async function createTodoHandler(req: Request, res: Response, next: NextFunction) {
 	try {
-		const userId = get(req, "user._doc._id");
+		const userId = get(req, "user._id") ? get(req, "user._id") : get(req, "user._doc._id")
 		const body = req.body;
 		const todo = await createTodo({ ...body, user: userId }, body.taskList)
 
@@ -23,7 +23,11 @@ export async function createTodoHandler(req: Request, res: Response, next: NextF
 export async function findAllTodoHandler(req: Request, res: Response, next: NextFunction) {
 	try {
 
+		const userId = get(req, "user._id") ? get(req, "user._id") : get(req, "user._doc._id")
+		req.query.user = userId
 		const todo = await findAllTodo(req.query)
+
+		console.log(todo.paginator.itemCount)
 
 		if (!todo || todo.itemsList.length === 0) {
 			return singletonResponse.response("Not found", "No Todo list Found", 404, res)
@@ -62,11 +66,22 @@ export async function findTodoHandler(req: Request, res: Response, next: NextFun
 export async function findAndUpdateHandler(req: Request, res: Response, next: NextFunction) {
 	try {
 
-		const userId = get(req, "user._doc._id")
+		const userId = get(req, "user._id") ?? get(req, "user._doc._id")
 		const _id = get(req, "params.todoId")
+
 		const update = req.body
 
+
 		const todo: any = await findTodo({ _id }) 
+
+		// console.log(String(todo._id) == userId)
+		console.log(todo)
+		console.log(userId)
+
+		// console.log(todo)
+
+		// console.log(userId)
+		// console.log(String(todo.user))
 
 		if (!todo) {
 			return singletonResponse.response("Not found", `Todo[${_id}] Not Found`, 404, res)

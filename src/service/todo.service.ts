@@ -23,7 +23,7 @@ export async function createTodo(todo: DocumentDefinition<ITodo>, task: Array<Do
 			new: true, useFindAndModify: true
 		}
 	)
-
+	
 	task.forEach((element) => {
 		todoResult = createTask(OTodo, element)
 	})
@@ -45,7 +45,7 @@ export async function findAllTodo(query?: object | string | number | any) {
 	};
 
 	const options: object = {
-	  select: "-__v -_id",
+	  select: "-__v",
 	  page: parseInt(query.page),
 	  limit: 8,
 	  customLabels: myCustomLabels,
@@ -58,6 +58,7 @@ export async function findAllTodo(query?: object | string | number | any) {
 	const searchType = get(inputQuery, "search") ? "search" : "filter"
 
 	const FTodos = Object.keys(inputQuery).length !== 0 ? todosFilters(omit(query, "page"), searchType) : {}
+	console.log(FTodos.$and[0].endDate)
 
 	return await Todo.paginate(FTodos, options, myCustomLabels)
 }

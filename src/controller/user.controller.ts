@@ -6,6 +6,7 @@ import log from "../logger"
 
 export async function createUserHandler(req: Request, res: Response, next: NextFunction) {
 	try {
+		log.info("Create new user test")
 		const user = await createUser(req.body)
 		return singletonResponse.response("Successful", `Create [${user.name}] Successfully`, 201, res, { ...omit(user, "password") })
 

@@ -8,6 +8,7 @@ const deserializeUser = async (
   res: Response,
   next: NextFunction
 ) => {
+
   const accessToken = get(req, "headers.authorization", "").replace(
     /^Bearer\s/,
     ""
@@ -30,6 +31,7 @@ const deserializeUser = async (
     const newAccessToken = await reIssueAccessToken({ refreshToken });
 
     if (newAccessToken) {
+
       // Add the new access token to the response header
       res.setHeader("x-access-token", newAccessToken);
 

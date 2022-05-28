@@ -1,0 +1,45 @@
+version: "3"
+
+services: 
+    mongo: 
+        restart: always
+        image: mongo
+        volumes:
+          - ../../data:/data/db
+        ports:
+          - "27017:27017"
+        networks:
+          - todo
+    todo: 
+        restart: always
+        build:
+            context: ../../ 
+            dockerfile: ./deployment/prod/prod.Dockerfile
+        env_file: ../../config/env/prod.env
+        environment:
+            - TZ=Asia/Ho_Chi_Minh
+            - VIRTUAL_HOST=localhost
+            - LETSENCRYPT_HOST=localhost
+            - VIRTUAL_PORT=8000
+        ports:
+            - 8000:8000
+        expose:
+            - 8000
+        networks:
+            - todo
+        volumes:
+            - ../../:/todo
+        external_links:
+            - mongo
+        depends_on:
+            - mongo
+
+networks:
+    todo:
+        external: true
+
+volumes:
+    data:
+
+
+

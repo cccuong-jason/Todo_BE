@@ -1,4 +1,4 @@
-import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery } from "mongoose"
+import { DocumentDefinition, FilterQuery, QueryOptions, UpdateQuery, ObjectId } from "mongoose"
 import Todo, { ITodo } from "../model/todo.model" 
 import { forEach } from "lodash"
 import dayjs from "dayjs"
@@ -29,6 +29,8 @@ class TodoFilters {
 
 	set queryList(params: any) {
 
+		console.log(new Date(params.gteDate))
+
 		this._queryList = {
 			status: {
 				status: params.status !== undefined? params.status : null
@@ -39,19 +41,29 @@ class TodoFilters {
 				}
 			},
 			interval : {
-				createdAt: {
+				startDate: {
 				    $gte: params.interval !== undefined? params.interval.split(",")[0] : null,
 				    $lte: params.interval !== undefined? params.interval.split(",")[1] : null
 				}
 			},
 			lgeDate : {
-				createdAt: {
+				endDate: {
 				    $lte: params.lgeDate !== undefined? new Date(params.lgeDate) : null
 				}
 			},
 			gteDate : {
-				createdAt: {
-				    $gte: params.lgeDate !== undefined? new Date(params.gteDate) : null
+				startDate: {
+				    $gte: params.gteDate !== undefined? new Date(params.gteDate) : null
+				}
+			},
+			date: {
+				startDate: {
+					$eq: params.date !== undefined? new Date(params.date) : null
+				}
+			},
+			user: {
+				$match: {
+					_id: params.user !== undefined? params.user : null
 				}
 			}
 		}	
@@ -89,8 +101,6 @@ export function todosFilters(input: FilterQuery<ITodo>, searchType: string) {
 		return FTodos.buildFilter(input)	
 
 	} else {
-
-		console.log("Build Search ...")
 
 		return  FTodos.buildSearch(input)
 	}
